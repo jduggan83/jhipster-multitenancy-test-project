@@ -70,6 +70,12 @@ export class NavbarComponent implements OnInit {
         this.isNavbarCollapsed = !this.isNavbarCollapsed;
     }
 
+    hasSubscription() {
+        return this.principal.getSubscription() ? true : false;
+    }
+    hasTester() {
+        return this.principal.getTester() ? true : false;
+    }
     getImageUrl() {
         return this.isAuthenticated() ? this.principal.getImageUrl() : null;
     }

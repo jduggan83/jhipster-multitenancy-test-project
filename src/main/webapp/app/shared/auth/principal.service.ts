@@ -91,6 +91,14 @@ export class Principal {
         return this.authenticationState.asObservable();
     }
 
+    getSubscription(): String {
+        return this.isIdentityResolved() ? this.userIdentity.subscription : null;
+    }
+
+    getTester(): String {
+        return this.isIdentityResolved() ? this.userIdentity.tester : null;
+    }
+
     getImageUrl(): String {
         return this.isIdentityResolved() ? this.userIdentity.imageUrl : null;
     }

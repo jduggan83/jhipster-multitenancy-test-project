@@ -76,6 +76,18 @@
                             <span jhiTranslate="global.menu.admin.apidocs">API</span>
                         </a>
                     </li>
+                    <li [hidden]="hasSubscription()">
+                        <a class="dropdown-item" routerLink="subscription-management" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.admin.subscription-management">Subscription Management</span>
+                        </a>
+                    </li>
+                    <li [hidden]="hasTester()">
+                        <a class="dropdown-item" routerLink="tester-management" routerLinkActive="active" (click)="collapseNavbar()">
+                            <i class="fa fa-fw fa-asterisk" aria-hidden="true"></i>
+                            <span jhiTranslate="global.menu.admin.tester-management">Tester Management</span>
+                        </a>
+                    </li>
                     <!-- jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here -->
                     <li *ngIf="!inProduction">
                         <a class="dropdown-item" href='./h2-console' target="_tab" (click)="collapseNavbar()">

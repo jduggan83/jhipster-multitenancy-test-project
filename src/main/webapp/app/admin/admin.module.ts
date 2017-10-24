@@ -7,6 +7,18 @@ import { JhipsterSharedModule } from '../shared';
 import {
     adminState,
     AuditsComponent,
+    UserMgmtComponent,
+    UserDialogComponent,
+    UserDeleteDialogComponent,
+    UserMgmtDetailComponent,
+    UserMgmtDialogComponent,
+    UserMgmtDeleteDialogComponent,
+    TesterMgmtComponent,
+    TesterMgmtDetailComponent,
+    TesterMgmtDialogComponent,
+    TesterDialogComponent,
+    TesterDeleteDialogComponent,
+    TesterMgmtDeleteDialogComponent,
     LogsComponent,
     JhiMetricsMonitoringModalComponent,
     JhiMetricsMonitoringComponent,
@@ -19,6 +31,12 @@ import {
     JhiHealthService,
     JhiMetricsService,
     LogsService,
+    UserResolvePagingParams,
+    UserResolve,
+    UserModalService,
+    TesterResolvePagingParams,
+    TesterService,
+    TesterModalService
 } from './';
 
 @NgModule({
@@ -29,6 +47,18 @@ import {
     ],
     declarations: [
         AuditsComponent,
+        UserMgmtComponent,
+        UserDialogComponent,
+        UserDeleteDialogComponent,
+        UserMgmtDetailComponent,
+        UserMgmtDialogComponent,
+        UserMgmtDeleteDialogComponent,
+        TesterMgmtComponent,
+        TesterMgmtDetailComponent,
+        TesterMgmtDialogComponent,
+        TesterDialogComponent,
+        TesterDeleteDialogComponent,
+        TesterMgmtDeleteDialogComponent,
         LogsComponent,
         JhiConfigurationComponent,
         JhiHealthCheckComponent,
@@ -38,8 +68,12 @@ import {
         JhiMetricsMonitoringModalComponent
     ],
     entryComponents: [
+        UserMgmtDialogComponent,
+        UserMgmtDeleteDialogComponent,
         JhiHealthModalComponent,
         JhiMetricsMonitoringModalComponent,
+        TesterMgmtDialogComponent,
+        TesterMgmtDeleteDialogComponent
     ],
     providers: [
         AuditsService,
@@ -47,6 +81,12 @@ import {
         JhiHealthService,
         JhiMetricsService,
         LogsService,
+        UserResolvePagingParams,
+        UserResolve,
+        UserModalService,
+        TesterResolvePagingParams,
+        TesterService,
+        TesterModalService
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

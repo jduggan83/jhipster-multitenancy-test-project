@@ -1,0 +1,17 @@
+<div *ngIf="subscription">
+    <h2>
+        <span jhiTranslate="subscriptionManagement.detail.title">Subscription</span> [<b>{{subscription.name}}</b>]
+    </h2>
+    <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="subscriptionManagement.name">Name</span></dt>
+        <dd>
+            <span>{{subscription.name}}</span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            routerLink="/subscription-management"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+    </button>
+</div>
