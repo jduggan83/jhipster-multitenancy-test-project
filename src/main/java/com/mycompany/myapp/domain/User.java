@@ -19,6 +19,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.time.Instant;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * A user.
@@ -26,6 +29,8 @@ import java.time.Instant;
 @Entity
 @Table(name = "jhi_user")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@FilterDef(name = "ZOO_FILTER", parameters = {@ParamDef(name = "zooId", type = "long")})
+@Filter(name = "ZOO_FILTER", condition = "zoo_id = :zooId")
 public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,8 +68,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(nullable = false)
     private boolean activated = false;
 
-    @Size(min = 2, max = 6)
-    @Column(name = "lang_key", length = 6)
+    @Size(min = 2, max = 5)
+    @Column(name = "lang_key", length = 5)
     private String langKey;
 
     @Size(max = 256)
@@ -93,6 +98,17 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
+
+    @ManyToOne
+    private Zoo zoo;
+
+    public Zoo getZoo() {
+        return zoo;
+    }
+
+    public void setZoo(Zoo zoo) {
+        this.zoo = zoo;
+    }
 
     public Long getId() {
         return id;
@@ -182,7 +198,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     public void setResetDate(Instant resetDate) {
        this.resetDate = resetDate;
     }
-
     public String getLangKey() {
         return langKey;
     }

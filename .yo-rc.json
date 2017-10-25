@@ -34,5 +34,8 @@
     "languages": [
       "en"
     ]
+  },
+  "generator-jhipster-multitenancy": {
+    "tenantName": "zoo"
   }
 }
