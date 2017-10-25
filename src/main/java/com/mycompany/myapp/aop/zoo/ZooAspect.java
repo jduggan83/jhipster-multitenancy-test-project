@@ -36,7 +36,7 @@ public class ZooAspect {
      * Filter users based on which zoo the user is associated with.
      * Skip filter if user has no zoo
      */
-    @Before("execution(* com.mycompany.myapp.service.UserService.*(..))")
+    @Before("execution(* com.mycompany.myapp.service.UserService.*(..)) || execution(* com.mycompany.myapp.service.AnimalService.*(..))")
     public void beforeExecution() throws Throwable {
         String login = SecurityUtils.getCurrentUserLogin();
         User user = userRepository.findOneByLogin(login).get();

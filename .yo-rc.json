@@ -36,6 +36,9 @@
     ]
   },
   "generator-jhipster-multitenancy": {
-    "tenantName": "zoo"
+    "tenantName": "zoo",
+    "tenantisedEntities": [
+      "animal"
+    ]
   }
 }

@@ -1,0 +1,28 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "zoo",
+            "otherEntityName": "zoo",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "animal"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20171025150640",
+    "dto": "no",
+    "service": "serviceClass",
+    "entityTableName": "animal",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination"
+}
