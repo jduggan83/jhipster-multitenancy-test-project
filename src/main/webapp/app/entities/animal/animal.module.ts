@@ -13,7 +13,6 @@ import {
     AnimalDeleteDialogComponent,
     animalRoute,
     animalPopupRoute,
-    AnimalResolvePagingParams,
 } from './';
 
 const ENTITY_STATES = [
@@ -44,7 +43,6 @@ const ENTITY_STATES = [
     providers: [
         AnimalService,
         AnimalPopupService,
-        AnimalResolvePagingParams,
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

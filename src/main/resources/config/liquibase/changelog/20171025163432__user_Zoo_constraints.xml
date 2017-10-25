@@ -6,7 +6,7 @@
     <!--
         Added the constraints for entity zoo.
     -->
-    <changeSet id="20171025150504-1" author="jhipster">
+    <changeSet id="20171025163432-1" author="jhipster">
          <addColumn tableName="jhi_user">
             <column name="zoo_id" type="bigint"/>
          </addColumn>

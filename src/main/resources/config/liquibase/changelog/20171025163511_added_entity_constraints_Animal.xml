@@ -6,7 +6,7 @@
     <!--
         Added the constraints for entity Animal.
     -->
-    <changeSet id="20171025150640-2" author="jhipster">
+    <changeSet id="20171025163511-2" author="jhipster">
         
         <addForeignKeyConstraint baseColumnNames="zoo_id"
                                  baseTableName="animal"

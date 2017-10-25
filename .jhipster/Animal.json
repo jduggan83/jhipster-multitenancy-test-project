@@ -19,10 +19,10 @@
             "fieldType": "String"
         }
     ],
-    "changelogDate": "20171025150640",
+    "changelogDate": "20171025163511",
     "dto": "no",
     "service": "serviceClass",
     "entityTableName": "animal",
     "jpaMetamodelFiltering": false,
-    "pagination": "pagination"
+    "pagination": "no"
 }

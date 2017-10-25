@@ -39,11 +39,14 @@ public class ZooAspect {
     @Before("execution(* com.mycompany.myapp.service.UserService.*(..)) || execution(* com.mycompany.myapp.service.AnimalService.*(..))")
     public void beforeExecution() throws Throwable {
         String login = SecurityUtils.getCurrentUserLogin();
-        User user = userRepository.findOneByLogin(login).get();
+		
+		if(login != null) {
+			User user = userRepository.findOneByLogin(login).get();
 
-        if (user.getZoo() != null) {
-            Filter filter = entityManager.unwrap(Session.class).enableFilter("ZOO_FILTER");
-            filter.setParameter(fieldName, user.getZoo().getId());
-        }
+			if (user.getZoo() != null) {
+				Filter filter = entityManager.unwrap(Session.class).enableFilter("ZOO_FILTER");
+				filter.setParameter(fieldName, user.getZoo().getId());
+			}
+		}
     }
 }

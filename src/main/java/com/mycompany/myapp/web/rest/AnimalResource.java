@@ -4,15 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.mycompany.myapp.domain.Animal;
 import com.mycompany.myapp.service.AnimalService;
 import com.mycompany.myapp.web.rest.util.HeaderUtil;
-import com.mycompany.myapp.web.rest.util.PaginationUtil;
-import io.swagger.annotations.ApiParam;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,17 +79,14 @@ public class AnimalResource {
     /**
      * GET  /animals : get all the animals.
      *
-     * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of animals in body
      */
     @GetMapping("/animals")
     @Timed
-    public ResponseEntity<List<Animal>> getAllAnimals(@ApiParam Pageable pageable) {
-        log.debug("REST request to get a page of Animals");
-        Page<Animal> page = animalService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/animals");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-    }
+    public List<Animal> getAllAnimals() {
+        log.debug("REST request to get all Animals");
+        return animalService.findAll();
+        }
 
     /**
      * GET  /animals/:id : get the "id" animal.
