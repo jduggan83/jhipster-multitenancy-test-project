@@ -1,5 +1,3 @@
-import { Company } from './../../admin/company-management/company.model';
-
 export class User {
     public id?: any;
     public login?: string;
@@ -14,7 +12,6 @@ export class User {
     public lastModifiedBy?: string;
     public lastModifiedDate?: Date;
     public password?: string;
-    public company?: Company;
 
     constructor(
         id?: any,
@@ -29,8 +26,7 @@ export class User {
         createdDate?: Date,
         lastModifiedBy?: string,
         lastModifiedDate?: Date,
-        password?: string,
-        company?: Company
+        password?: string
     ) {
         this.id = id ? id : null;
         this.login = login ? login : null;
@@ -45,6 +41,5 @@ export class User {
         this.lastModifiedBy = lastModifiedBy ? lastModifiedBy : null;
         this.lastModifiedDate = lastModifiedDate ? lastModifiedDate : null;
         this.password = password ? password : null;
-        this.company = company ? company : null;
     }
 }

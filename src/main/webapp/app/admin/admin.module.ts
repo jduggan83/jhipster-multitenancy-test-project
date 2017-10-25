@@ -13,12 +13,6 @@ import {
     UserMgmtDetailComponent,
     UserMgmtDialogComponent,
     UserMgmtDeleteDialogComponent,
-    CompanyMgmtComponent,
-    CompanyMgmtDetailComponent,
-    CompanyMgmtDialogComponent,
-    CompanyDialogComponent,
-    CompanyDeleteDialogComponent,
-    CompanyMgmtDeleteDialogComponent,
     LogsComponent,
     JhiMetricsMonitoringModalComponent,
     JhiMetricsMonitoringComponent,
@@ -33,10 +27,7 @@ import {
     LogsService,
     UserResolvePagingParams,
     UserResolve,
-    UserModalService,
-    CompanyResolvePagingParams,
-    CompanyService,
-    CompanyModalService
+    UserModalService
 } from './';
 
 @NgModule({
@@ -53,12 +44,6 @@ import {
         UserMgmtDetailComponent,
         UserMgmtDialogComponent,
         UserMgmtDeleteDialogComponent,
-        CompanyMgmtComponent,
-        CompanyMgmtDetailComponent,
-        CompanyMgmtDialogComponent,
-        CompanyDialogComponent,
-        CompanyDeleteDialogComponent,
-        CompanyMgmtDeleteDialogComponent,
         LogsComponent,
         JhiConfigurationComponent,
         JhiHealthCheckComponent,
@@ -72,8 +57,6 @@ import {
         UserMgmtDeleteDialogComponent,
         JhiHealthModalComponent,
         JhiMetricsMonitoringModalComponent,
-        CompanyMgmtDialogComponent,
-        CompanyMgmtDeleteDialogComponent
     ],
     providers: [
         AuditsService,
@@ -83,10 +66,7 @@ import {
         LogsService,
         UserResolvePagingParams,
         UserResolve,
-        UserModalService,
-        CompanyResolvePagingParams,
-        CompanyService,
-        CompanyModalService
+        UserModalService
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
