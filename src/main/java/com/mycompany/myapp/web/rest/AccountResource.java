@@ -1,33 +1,30 @@
 package com.mycompany.myapp.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
+
 import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.security.SecurityUtils;
+import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.UserDTO;
-import com.mycompany.myapp.web.rest.errors.InternalServerErrorException;
+import com.mycompany.myapp.web.rest.errors.*;
+import com.mycompany.myapp.web.rest.vm.KeyAndPasswordVM;
+import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
 
-import com.codahale.metrics.annotation.Timed;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.time.Instant;
+import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
+
 /**
- * REST controller for managing the current user's account.
- */
+* REST controller for managing the current user's account.
+*/
 @RestController
 @RequestMapping("/api")
 public class AccountResource {
@@ -38,17 +35,57 @@ public class AccountResource {
 
     private final UserService userService;
 
-    public AccountResource(UserRepository userRepository, UserService userService) {
+    private final MailService mailService;
+
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+
         this.userRepository = userRepository;
         this.userService = userService;
+        this.mailService = mailService;
     }
 
     /**
-     * GET  /authenticate : check if the user is authenticated, and return its login.
-     *
-     * @param request the HTTP request
-     * @return the login if the user is authenticated
-     */
+    * POST  /register : register the user.
+    *
+    * @param managedUserVM the managed user View Model
+    * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect
+    * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
+    * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already used
+    */
+    @PostMapping("/register")
+    @Timed
+    @ResponseStatus(HttpStatus.CREATED)
+    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+        if (!checkPasswordLength(managedUserVM.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        userRepository.findOneByLogin(managedUserVM.getLogin().toLowerCase()).ifPresent(u -> {throw new LoginAlreadyUsedException();});
+        userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).ifPresent(u -> {throw new EmailAlreadyUsedException();});
+        User user = userService.registerUser(managedUserVM);
+        mailService.sendActivationEmail(user);
+    }
+
+    /**
+    * GET  /activate : activate the registered user.
+    *
+    * @param key the activation key
+    * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be activated
+    */
+    @GetMapping("/activate")
+    @Timed
+    public void activateAccount(@RequestParam(value = "key") String key) {
+        Optional<User> user = userService.activateRegistration(key);
+        if (!user.isPresent()) {
+            throw new InternalServerErrorException("No user was found for this reset key");
+        };
+    }
+
+    /**
+    * GET  /authenticate : check if the user is authenticated, and return its login.
+    *
+    * @param request the HTTP request
+    * @return the login if the user is authenticated
+    */
     @GetMapping("/authenticate")
     @Timed
     public String isAuthenticated(HttpServletRequest request) {
@@ -57,128 +94,96 @@ public class AccountResource {
     }
 
     /**
-     * GET  /account : get the current user.
-     *
-     * @param principal the current user; resolves to null if not authenticated
-     * @return the current user
-     * @throws InternalServerErrorException 500 (Internal Server Error) if the user couldn't be returned
-     */
+    * GET  /account : get the current user.
+    *
+    * @return the current user
+    * @throws RuntimeException 500 (Internal Server Error) if the user couldn't be returned
+    */
     @GetMapping("/account")
     @Timed
-    @SuppressWarnings("unchecked")
-    public UserDTO getAccount(Principal principal) {
-        if (principal != null) {
-            if (principal instanceof OAuth2Authentication) {
-                OAuth2Authentication authentication = (OAuth2Authentication) principal;
-                Map<String, Object> details = (Map<String, Object>) authentication.getUserAuthentication().getDetails();
-                Set<Authority> userAuthorities;
+    public UserDTO getAccount() {
+        return Optional.ofNullable(userService.getUserWithAuthorities())
+            .map(UserDTO::new)
+            .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
+    }
 
-                // get roles from details
-                if (details.get("roles") != null) {
-                    List<String> roles = (List) details.get("roles");
-                    userAuthorities = roles.stream()
-                        .filter(role -> role.startsWith("ROLE_"))
-                        .map(role -> {
-                            Authority userAuthority = new Authority();
-                            userAuthority.setName(role);
-                            return userAuthority;
-                        })
-                        .collect(Collectors.toSet());
-                    // if roles don't exist, try groups
-                } else if (details.get("groups") != null) {
-                    List<String> groups = (List) details.get("groups");
-                    userAuthorities = groups.stream()
-                        .filter(group -> group.startsWith("ROLE_"))
-                        .map(group -> {
-                            Authority userAuthority = new Authority();
-                            userAuthority.setName(group);
-                            return userAuthority;
-                        })
-                        .collect(Collectors.toSet());
-                } else {
-                    userAuthorities = authentication.getAuthorities().stream()
-                        .map(role -> {
-                            Authority userAuthority = new Authority();
-                            userAuthority.setName(role.getAuthority());
-                            return userAuthority;
-                        })
-                        .collect(Collectors.toSet());
-                }
-
-                User user = new User();
-                user.setLogin((String) details.get("preferred_username"));
-                if (details.get("given_name") != null) {
-                    user.setFirstName((String) details.get("given_name"));
-                }
-                if (details.get("family_name") != null) {
-                    user.setFirstName((String) details.get("family_name"));
-                }
-                if (details.get("email_verified") != null) {
-                    user.setActivated((Boolean) details.get("email_verified"));
-                }
-                if (details.get("email") != null) {
-                    user.setEmail((String) details.get("email"));
-                }
-                if (details.get("langKey") != null) {
-                    user.setLangKey((String) details.get("langKey"));
-                } else if (details.get("locale") != null) {
-                    String locale = (String) details.get("locale");
-                    String langKey = locale.substring(0, locale.indexOf("-"));
-                    user.setLangKey(langKey);
-                }
-
-                user.setAuthorities(userAuthorities);
-
-                UserDTO userDTO = new UserDTO(user);
-
-                // convert Authorities to GrantedAuthorities
-                Set<GrantedAuthority> grantedAuthorities = new LinkedHashSet<>();
-                userAuthorities.forEach(authority -> {
-                    grantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
-                });
-
-                // create UserDetails so #{principal.username} works
-                UserDetails userDetails =
-                    new org.springframework.security.core.userdetails.User(user.getLogin(),
-                    "N/A", grantedAuthorities);
-                // update Spring Security Authorities to match groups claim from IdP
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                    userDetails, "N/A", grantedAuthorities);
-                token.setDetails(details);
-                authentication = new OAuth2Authentication(authentication.getOAuth2Request(), token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // save account in to sync users between IdP and JHipster's local database
-                Optional<User> existingUser = userRepository.findOneByLogin(userDTO.getLogin());
-                if (existingUser.isPresent()) {
-                    // if IdP sends last updated information, use it to determine if an update should happen
-                    if (details.get("updated_at") != null) {
-                        Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
-                        Instant idpModifiedDate = new Date(Long.valueOf((Integer) details.get("updated_at"))).toInstant();
-                        if (idpModifiedDate.isAfter(dbModifiedDate)) {
-                            log.debug("Updating user '{}' in local database...", userDTO.getLogin());
-                            userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-                                userDTO.getLangKey(), userDTO.getImageUrl());
-                        }
-                        // no last updated info, blindly update
-                    } else {
-                        log.debug("Updating user '{}' in local database...", userDTO.getLogin());
-                        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-                            userDTO.getLangKey(), userDTO.getImageUrl());
-                    }
-                } else {
-                    log.debug("Saving user '{}' in local database...", userDTO.getLogin());
-                    userRepository.save(user);
-                }
-                return userDTO;
-            } else {
-                // Allow Spring Security Test to be used to mock users in the database
-                return Optional.ofNullable(userService.getUserWithAuthorities())
-                    .map(UserDTO::new)
-                    .orElseThrow(() -> new InternalServerErrorException("User could not be found"));
-            }
-        } else {
+    /**
+    * POST  /account : update the current user information.
+    *
+    * @param userDTO the current user information
+    * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
+    * @throws RuntimeException 500 (Internal Server Error) if the user login wasn't found
+    */
+    @PostMapping("/account")
+    @Timed
+    public void saveAccount(@Valid @RequestBody UserDTO userDTO) {
+        final String userLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+        if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
+            throw new EmailAlreadyUsedException();
+        }
+        Optional<User> user = userRepository.findOneByLogin(userLogin);
+        if (!user.isPresent()) {
             throw new InternalServerErrorException("User could not be found");
         }
+        userService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+            userDTO.getLangKey(), userDTO.getImageUrl());
+   }
+
+    /**
+    * POST  /account/change-password : changes the current user's password
+    *
+    * @param password the new password
+    * @throws InvalidPasswordException 400 (Bad Request) if the new password is incorrect
+    */
+    @PostMapping(path = "/account/change-password")
+    @Timed
+    public void changePassword(@RequestBody String password) {
+        if (!checkPasswordLength(password)) {
+            throw new InvalidPasswordException();
+        }
+        userService.changePassword(password);
+   }
+
+    /**
+    * POST   /account/reset-password/init : Send an email to reset the password of the user
+    *
+    * @param mail the mail of the user
+    * @throws EmailNotFoundException 400 (Bad Request) if the email address is not registered
+    */
+    @PostMapping(path = "/account/reset-password/init")
+    @Timed
+    public void requestPasswordReset(@RequestBody String mail) {
+       mailService.sendPasswordResetMail(
+           userService.requestPasswordReset(mail)
+               .orElseThrow(EmailNotFoundException::new)
+       );
+    }
+
+    /**
+    * POST   /account/reset-password/finish : Finish to reset the password of the user
+    *
+    * @param keyAndPassword the generated key and the new password
+    * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect
+    * @throws RuntimeException 500 (Internal Server Error) if the password could not be reset
+    */
+    @PostMapping(path = "/account/reset-password/finish")
+    @Timed
+    public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
+        if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
+            throw new InvalidPasswordException();
+        }
+        Optional<User> user =
+            userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
+
+        if (!user.isPresent()) {
+            throw new InternalServerErrorException("No user was found for this reset key");
+        }
+    }
+
+    private static boolean checkPasswordLength(String password) {
+        return !StringUtils.isEmpty(password) &&
+            password.length() >= ManagedUserVM.PASSWORD_MIN_LENGTH &&
+            password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH;
     }
 }

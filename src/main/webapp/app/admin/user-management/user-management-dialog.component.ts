@@ -5,10 +5,7 @@ import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
 import { UserModalService } from './user-modal.service';
-import { JhiLanguageHelper, User, UserService, ResponseWrapper, Principal } from '../../shared';
-
-import { Tester } from './../tester-management/tester.model';
-import { TesterService } from './../tester-management/tester.service';
+import { JhiLanguageHelper, User, UserService } from '../../shared';
 
 @Component({
     selector: 'jhi-user-mgmt-dialog',
@@ -16,25 +13,17 @@ import { TesterService } from './../tester-management/tester.service';
 })
 export class UserMgmtDialogComponent implements OnInit {
 
-    currentAccount: any;
     user: User;
     languages: any[];
     authorities: any[];
-    testers: Tester[];
     isSaving: Boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
         private languageHelper: JhiLanguageHelper,
-        private principal: Principal,
         private userService: UserService,
-        private testerService: TesterService,
         private eventManager: JhiEventManager
-    ) {
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-        });
-    }
+    ) {}
 
     ngOnInit() {
         this.isSaving = false;
@@ -45,12 +34,6 @@ export class UserMgmtDialogComponent implements OnInit {
         this.languageHelper.getAll().then((languages) => {
             this.languages = languages;
         });
-
-        this.testerService.query().subscribe(
-            (res: ResponseWrapper) => {
-                this.testers = res.json;
-            }
-        );
     }
 
     clear() {
@@ -59,9 +42,6 @@ export class UserMgmtDialogComponent implements OnInit {
 
     save() {
         this.isSaving = true;
-        if (this.currentAccount.tester) {
-            this.user.tester = this.currentAccount.tester;
-        }
         if (this.user.id !== null) {
             this.userService.update(this.user).subscribe((response) => this.onSaveSuccess(response), () => this.onSaveError());
         } else {

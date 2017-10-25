@@ -4,7 +4,6 @@ import com.mycompany.myapp.config.Constants;
 
 import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.domain.Tester;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
@@ -41,7 +40,7 @@ public class UserDTO {
 
     private boolean activated = false;
 
-    @Size(min = 2, max = 5)
+    @Size(min = 2, max = 6)
     private String langKey;
 
     private String createdBy;
@@ -54,8 +53,6 @@ public class UserDTO {
 
     private Set<String> authorities;
 
-    private Tester tester;
-
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -65,13 +62,13 @@ public class UserDTO {
             user.getEmail(), user.getActivated(), user.getImageUrl(), user.getLangKey(),
             user.getCreatedBy(), user.getCreatedDate(), user.getLastModifiedBy(), user.getLastModifiedDate(),
             user.getAuthorities().stream().map(Authority::getName)
-                .collect(Collectors.toSet()), user.getTester());
+                .collect(Collectors.toSet()));
     }
 
     public UserDTO(Long id, String login, String firstName, String lastName,
         String email, boolean activated, String imageUrl, String langKey,
         String createdBy, Instant createdDate, String lastModifiedBy, Instant lastModifiedDate,
-        Set<String> authorities, Tester tester) {
+        Set<String> authorities) {
 
         this.id = id;
         this.login = login;
@@ -86,15 +83,6 @@ public class UserDTO {
         this.lastModifiedBy = lastModifiedBy;
         this.lastModifiedDate = lastModifiedDate;
         this.authorities = authorities;
-        this.tester = tester;
-    }
-
-    public Tester getTester() {
-        return tester;
-    }
-
-    public void setTester(Tester tester) {
-        this.tester = tester;
     }
 
     public Long getId() {

@@ -2,7 +2,7 @@ package com.mycompany.myapp.web.rest.vm;
 
 import com.mycompany.myapp.service.dto.UserDTO;
 import javax.validation.constraints.Size;
-import com.mycompany.myapp.domain.Tester;
+
 import java.time.Instant;
 import java.util.Set;
 
@@ -11,17 +11,29 @@ import java.util.Set;
  */
 public class ManagedUserVM extends UserDTO {
 
+    public static final int PASSWORD_MIN_LENGTH = 4;
+
+    public static final int PASSWORD_MAX_LENGTH = 100;
+
+    @Size(min = PASSWORD_MIN_LENGTH, max = PASSWORD_MAX_LENGTH)
+    private String password;
+
     public ManagedUserVM() {
         // Empty constructor needed for Jackson.
     }
 
-    public ManagedUserVM(Long id, String login, String firstName, String lastName,
+    public ManagedUserVM(Long id, String login, String password, String firstName, String lastName,
                          String email, boolean activated, String imageUrl, String langKey,
                          String createdBy, Instant createdDate, String lastModifiedBy, Instant lastModifiedDate,
-                        Set<String> authorities, Tester tester) {
+                        Set<String> authorities) {
 
         super(id, login, firstName, lastName, email, activated, imageUrl, langKey,
-            createdBy, createdDate, lastModifiedBy, lastModifiedDate,  authorities, tester);
+            createdBy, createdDate, lastModifiedBy, lastModifiedDate,  authorities);
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override

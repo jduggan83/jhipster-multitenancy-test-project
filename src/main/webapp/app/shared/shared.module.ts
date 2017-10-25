@@ -10,6 +10,8 @@ import {
     UserService,
     StateStorageService,
     LoginService,
+    LoginModalService,
+    JhiLoginModalComponent,
     Principal,
     HasAnyAuthorityDirective,
 } from './';
@@ -20,10 +22,12 @@ import {
         JhipsterSharedCommonModule
     ],
     declarations: [
+        JhiLoginModalComponent,
         HasAnyAuthorityDirective
     ],
     providers: [
         LoginService,
+        LoginModalService,
         AccountService,
         StateStorageService,
         Principal,
@@ -32,8 +36,10 @@ import {
         UserService,
         DatePipe
     ],
+    entryComponents: [JhiLoginModalComponent],
     exports: [
         JhipsterSharedCommonModule,
+        JhiLoginModalComponent,
         HasAnyAuthorityDirective,
         DatePipe
     ],

@@ -1,5 +1,3 @@
-import { Tester } from './../../admin/tester-management/tester.model';
-
 export class User {
     public id?: any;
     public login?: string;
@@ -14,7 +12,6 @@ export class User {
     public lastModifiedBy?: string;
     public lastModifiedDate?: Date;
     public password?: string;
-    public tester?: Tester;
 
     constructor(
         id?: any,
@@ -29,8 +26,7 @@ export class User {
         createdDate?: Date,
         lastModifiedBy?: string,
         lastModifiedDate?: Date,
-        password?: string,
-        tester?: Tester
+        password?: string
     ) {
         this.id = id ? id : null;
         this.login = login ? login : null;
@@ -45,6 +41,5 @@ export class User {
         this.lastModifiedBy = lastModifiedBy ? lastModifiedBy : null;
         this.lastModifiedDate = lastModifiedDate ? lastModifiedDate : null;
         this.password = password ? password : null;
-        this.tester = tester ? tester : null;
     }
 }
