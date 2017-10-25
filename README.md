@@ -1,5 +1,6 @@
 # jhipster
 [![Build Status][travis-image]][travis-url]
+
 This application was generated using JHipster 4.10.0, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.10.0](http://www.jhipster.tech/documentation-archive/v4.10.0).
 
 ## Development
