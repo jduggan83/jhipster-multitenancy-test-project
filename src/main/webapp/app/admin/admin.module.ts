@@ -13,6 +13,12 @@ import {
     UserMgmtDetailComponent,
     UserMgmtDialogComponent,
     UserMgmtDeleteDialogComponent,
+    ZooMgmtComponent,
+    ZooMgmtDetailComponent,
+    ZooMgmtDialogComponent,
+    ZooDialogComponent,
+    ZooDeleteDialogComponent,
+    ZooMgmtDeleteDialogComponent,
     LogsComponent,
     JhiMetricsMonitoringModalComponent,
     JhiMetricsMonitoringComponent,
@@ -27,7 +33,10 @@ import {
     LogsService,
     UserResolvePagingParams,
     UserResolve,
-    UserModalService
+    UserModalService,
+    ZooResolvePagingParams,
+    ZooService,
+    ZooModalService
 } from './';
 
 @NgModule({
@@ -44,6 +53,12 @@ import {
         UserMgmtDetailComponent,
         UserMgmtDialogComponent,
         UserMgmtDeleteDialogComponent,
+        ZooMgmtComponent,
+        ZooMgmtDetailComponent,
+        ZooMgmtDialogComponent,
+        ZooDialogComponent,
+        ZooDeleteDialogComponent,
+        ZooMgmtDeleteDialogComponent,
         LogsComponent,
         JhiConfigurationComponent,
         JhiHealthCheckComponent,
@@ -57,6 +72,8 @@ import {
         UserMgmtDeleteDialogComponent,
         JhiHealthModalComponent,
         JhiMetricsMonitoringModalComponent,
+        ZooMgmtDialogComponent,
+        ZooMgmtDeleteDialogComponent
     ],
     providers: [
         AuditsService,
@@ -66,7 +83,10 @@ import {
         LogsService,
         UserResolvePagingParams,
         UserResolve,
-        UserModalService
+        UserModalService,
+        ZooResolvePagingParams,
+        ZooService,
+        ZooModalService
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

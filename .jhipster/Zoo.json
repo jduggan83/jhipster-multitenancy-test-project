@@ -1,0 +1,28 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipName": "users",
+            "otherEntityName": "user",
+            "relationshipType": "one-to-many",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "zoo"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20171025150504",
+    "dto": "no",
+    "service": "serviceClass",
+    "entityTableName": "zoo",
+    "pagination": "pagination",
+    "jpaMetamodelFiltering": false    
+}

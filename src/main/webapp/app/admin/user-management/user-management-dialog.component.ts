@@ -5,7 +5,10 @@ import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
 import { UserModalService } from './user-modal.service';
-import { JhiLanguageHelper, User, UserService } from '../../shared';
+import { JhiLanguageHelper, User, UserService, ResponseWrapper, Principal } from '../../shared';
+
+import { Zoo } from './../zoo-management/zoo.model';
+import { ZooService } from './../zoo-management/zoo.service';
 
 @Component({
     selector: 'jhi-user-mgmt-dialog',
@@ -13,17 +16,25 @@ import { JhiLanguageHelper, User, UserService } from '../../shared';
 })
 export class UserMgmtDialogComponent implements OnInit {
 
+    currentAccount: any;
     user: User;
     languages: any[];
     authorities: any[];
+    zoos: Zoo[];
     isSaving: Boolean;
 
     constructor(
         public activeModal: NgbActiveModal,
         private languageHelper: JhiLanguageHelper,
+        private principal: Principal,
         private userService: UserService,
+        private zooService: ZooService,
         private eventManager: JhiEventManager
-    ) {}
+    ) {
+        this.principal.identity().then((account) => {
+            this.currentAccount = account;
+        });
+    }
 
     ngOnInit() {
         this.isSaving = false;
@@ -34,6 +45,12 @@ export class UserMgmtDialogComponent implements OnInit {
         this.languageHelper.getAll().then((languages) => {
             this.languages = languages;
         });
+
+        this.zooService.query().subscribe(
+            (res: ResponseWrapper) => {
+                this.zoos = res.json;
+            }
+        );
     }
 
     clear() {
@@ -42,6 +59,9 @@ export class UserMgmtDialogComponent implements OnInit {
 
     save() {
         this.isSaving = true;
+        if (this.currentAccount.zoo) {
+            this.user.zoo = this.currentAccount.zoo;
+        }
         if (this.user.id !== null) {
             this.userService.update(this.user).subscribe((response) => this.onSaveSuccess(response), () => this.onSaveError());
         } else {

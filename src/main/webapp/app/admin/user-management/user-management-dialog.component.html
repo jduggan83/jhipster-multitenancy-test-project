@@ -93,6 +93,14 @@
                 <span jhiTranslate="userManagement.activated">Activated</span>
             </label>
         </div>
+        
+        <div class="form-group" *ngIf="!currentAccount.zoo && zoos && zoos.length > 0">
+            <label jhiTranslate="userManagementZoo">Zoo</label>
+            <select class="form-control" id="zoo" name="zoo" [(ngModel)]="user.zoo">
+                <option [ngValue]="null"></option> 
+                <option [ngValue]="zoo.id === user.zoo?.id ? user.zoo : zoo" *ngFor="let zoo of zoos">{{zoo.name}}</option>
+            </select>
+        </div>
 
         <div class="form-group" *ngIf="languages && languages.length > 0">
             <label jhiTranslate="userManagement.langKey">Lang Key</label>

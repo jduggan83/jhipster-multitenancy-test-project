@@ -91,6 +91,10 @@ export class Principal {
         return this.authenticationState.asObservable();
     }
 
+    getZoo(): String {
+        return this.isIdentityResolved() ? this.userIdentity.zoo : null;
+    }
+
     getImageUrl(): String {
         return this.isIdentityResolved() ? this.userIdentity.imageUrl : null;
     }
