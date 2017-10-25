@@ -1,4 +1,5 @@
 # jhipster
+[![Build Status][travis-image]][travis-url]
 This application was generated using JHipster 4.10.0, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.10.0](http://www.jhipster.tech/documentation-archive/v4.10.0).
 
 ## Development
@@ -168,3 +169,5 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [Protractor]: https://angular.github.io/protractor/
 [Leaflet]: http://leafletjs.com/
 [DefinitelyTyped]: http://definitelytyped.org/
+[travis-image]: https://travis-ci.org/jduggan83/jhipster-multitenancy-test-project.svg?branch=master
+[travis-url]: https://travis-ci.org/jduggan83/jhipster-multitenancy-test-project
