@@ -8,7 +8,9 @@ import {
     logsRoute,
     metricsRoute,
     userMgmtRoute,
-    userDialogRoute
+    userDialogRoute,
+    companyMgmtRoute,
+    companyDialogRoute
 } from './';
 
 import { UserRouteAccessService } from '../shared';
@@ -20,7 +22,8 @@ const ADMIN_ROUTES = [
     healthRoute,
     logsRoute,
     ...userMgmtRoute,
-    metricsRoute
+    metricsRoute,
+    ...companyMgmtRoute
 ];
 
 export const adminState: Routes = [{
@@ -31,5 +34,6 @@ export const adminState: Routes = [{
     canActivate: [UserRouteAccessService],
     children: ADMIN_ROUTES
 },
-    ...userDialogRoute
+    ...userDialogRoute,
+    ...companyDialogRoute
 ];
