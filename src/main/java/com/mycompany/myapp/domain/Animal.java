@@ -1,9 +1,11 @@
 package com.mycompany.myapp.domain;
 
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "animal")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@FilterDef(name = "ZOO_FILTER", parameters = {@ParamDef(name = "zooId", type = "long")})
+@Filter(name = "ZOO_FILTER", condition = "zoo_id = :zooId")
 public class Animal implements Serializable {
 
     private static final long serialVersionUID = 1L;
