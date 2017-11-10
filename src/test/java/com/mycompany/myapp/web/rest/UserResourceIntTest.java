@@ -3,7 +3,7 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.JhipsterApp;
 import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.domain.Zoo;
+import com.mycompany.myapp.domain.Company;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.service.MailService;
@@ -106,7 +106,7 @@ public class UserResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        UserResource userResource = new UserResource(userRepository, mailService, userService);
+        UserResource userResource = new UserResource(userRepository, userService, mailService);
         this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -122,10 +122,10 @@ public class UserResourceIntTest {
      */
     public static User createEntity(EntityManager em) {
         User user = new User();
-        user.setLogin(DEFAULT_LOGIN);
+        user.setLogin(DEFAULT_LOGIN + RandomStringUtils.randomAlphabetic(5));
         user.setPassword(RandomStringUtils.random(60));
         user.setActivated(true);
-        user.setEmail(DEFAULT_EMAIL);
+        user.setEmail(RandomStringUtils.randomAlphabetic(5) + DEFAULT_EMAIL);
         user.setFirstName(DEFAULT_FIRSTNAME);
         user.setLastName(DEFAULT_LASTNAME);
         user.setImageUrl(DEFAULT_IMAGEURL);
@@ -136,6 +136,8 @@ public class UserResourceIntTest {
     @Before
     public void initTest() {
         user = createEntity(em);
+        user.setLogin(DEFAULT_LOGIN);
+        user.setEmail(DEFAULT_EMAIL);
     }
 
     @Test
@@ -143,9 +145,9 @@ public class UserResourceIntTest {
     @WithMockUser()
     public void createUser() throws Exception {
         int databaseSizeBeforeCreate = userRepository.findAll().size();
-        // create zoo object
-        Zoo zoo = ZooResourceIntTest.createEntity(em);
-        em.persist(zoo);
+        // create company object
+        Company company = CompanyResourceIntTest.createEntity(em);
+        em.persist(company);
 
         // Create the User
         Set<String> authorities = new HashSet<>();

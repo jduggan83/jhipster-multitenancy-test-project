@@ -13,12 +13,12 @@ import {
     UserMgmtDetailComponent,
     UserMgmtDialogComponent,
     UserMgmtDeleteDialogComponent,
-    ZooMgmtComponent,
-    ZooMgmtDetailComponent,
-    ZooMgmtDialogComponent,
-    ZooDialogComponent,
-    ZooDeleteDialogComponent,
-    ZooMgmtDeleteDialogComponent,
+    CompanyMgmtComponent,
+    CompanyMgmtDetailComponent,
+    CompanyMgmtDialogComponent,
+    CompanyDialogComponent,
+    CompanyDeleteDialogComponent,
+    CompanyMgmtDeleteDialogComponent,
     LogsComponent,
     JhiMetricsMonitoringModalComponent,
     JhiMetricsMonitoringComponent,
@@ -34,9 +34,9 @@ import {
     UserResolvePagingParams,
     UserResolve,
     UserModalService,
-    ZooResolvePagingParams,
-    ZooService,
-    ZooModalService
+    CompanyResolvePagingParams,
+    CompanyService,
+    CompanyModalService
 } from './';
 
 @NgModule({
@@ -53,12 +53,12 @@ import {
         UserMgmtDetailComponent,
         UserMgmtDialogComponent,
         UserMgmtDeleteDialogComponent,
-        ZooMgmtComponent,
-        ZooMgmtDetailComponent,
-        ZooMgmtDialogComponent,
-        ZooDialogComponent,
-        ZooDeleteDialogComponent,
-        ZooMgmtDeleteDialogComponent,
+        CompanyMgmtComponent,
+        CompanyMgmtDetailComponent,
+        CompanyMgmtDialogComponent,
+        CompanyDialogComponent,
+        CompanyDeleteDialogComponent,
+        CompanyMgmtDeleteDialogComponent,
         LogsComponent,
         JhiConfigurationComponent,
         JhiHealthCheckComponent,
@@ -72,8 +72,8 @@ import {
         UserMgmtDeleteDialogComponent,
         JhiHealthModalComponent,
         JhiMetricsMonitoringModalComponent,
-        ZooMgmtDialogComponent,
-        ZooMgmtDeleteDialogComponent
+        CompanyMgmtDialogComponent,
+        CompanyMgmtDeleteDialogComponent
     ],
     providers: [
         AuditsService,
@@ -84,9 +84,9 @@ import {
         UserResolvePagingParams,
         UserResolve,
         UserModalService,
-        ZooResolvePagingParams,
-        ZooService,
-        ZooModalService
+        CompanyResolvePagingParams,
+        CompanyService,
+        CompanyModalService
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

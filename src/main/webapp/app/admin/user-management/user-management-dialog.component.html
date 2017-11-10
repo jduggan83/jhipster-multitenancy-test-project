@@ -94,11 +94,11 @@
             </label>
         </div>
         
-        <div class="form-group" *ngIf="!currentAccount.zoo && zoos && zoos.length > 0">
-            <label jhiTranslate="userManagementZoo">Zoo</label>
-            <select class="form-control" id="zoo" name="zoo" [(ngModel)]="user.zoo">
+        <div class="form-group" *ngIf="!currentAccount.company && companies && companies.length > 0">
+            <label jhiTranslate="userManagementCompany">Company</label>
+            <select class="form-control" id="company" name="company" [(ngModel)]="user.company">
                 <option [ngValue]="null"></option> 
-                <option [ngValue]="zoo.id === user.zoo?.id ? user.zoo : zoo" *ngFor="let zoo of zoos">{{zoo.name}}</option>
+                <option [ngValue]="company.id === user.company?.id ? user.company : company" *ngFor="let company of companies">{{company.name}}</option>
             </select>
         </div>
 

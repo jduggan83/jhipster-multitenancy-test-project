@@ -4,7 +4,7 @@
       "packageName": "com.mycompany.myapp",
       "nativeLanguage": "en"
     },
-    "jhipsterVersion": "4.10.1",
+    "jhipsterVersion": "4.10.2",
     "baseName": "jhipster",
     "packageName": "com.mycompany.myapp",
     "packageFolder": "com/mycompany/myapp",
@@ -22,7 +22,7 @@
     "buildTool": "maven",
     "enableSocialSignIn": false,
     "enableSwaggerCodegen": false,
-    "jwtSecretKey": "89453ba0b600cd8cbf90a3e865403925d5e42eb8",
+    "jwtSecretKey": "78298f375a9fb6fc0d63e32c41e4534966c64324",
     "clientFramework": "angularX",
     "useSass": false,
     "clientPackageManager": "yarn",
@@ -36,9 +36,9 @@
     ]
   },
   "generator-jhipster-multitenancy": {
-    "tenantName": "zoo",
+    "tenantName": "company",
     "tenantisedEntities": [
-      "animal"
+      "book"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import { Zoo } from './../../admin/zoo-management/zoo.model';
+import { Company } from './../../admin/company-management/company.model';
 
 export class User {
     public id?: any;
@@ -14,7 +14,7 @@ export class User {
     public lastModifiedBy?: string;
     public lastModifiedDate?: Date;
     public password?: string;
-    public zoo?: Zoo;
+    public company?: Company;
 
     constructor(
         id?: any,
@@ -30,7 +30,7 @@ export class User {
         lastModifiedBy?: string,
         lastModifiedDate?: Date,
         password?: string,
-        zoo?: Zoo
+        company?: Company
     ) {
         this.id = id ? id : null;
         this.login = login ? login : null;
@@ -45,6 +45,6 @@ export class User {
         this.lastModifiedBy = lastModifiedBy ? lastModifiedBy : null;
         this.lastModifiedDate = lastModifiedDate ? lastModifiedDate : null;
         this.password = password ? password : null;
-        this.zoo = zoo ? zoo : null;
+        this.company = company ? company : null;
     }
 }

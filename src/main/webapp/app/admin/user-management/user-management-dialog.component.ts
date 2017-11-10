@@ -7,8 +7,8 @@ import { JhiEventManager } from 'ng-jhipster';
 import { UserModalService } from './user-modal.service';
 import { JhiLanguageHelper, User, UserService, ResponseWrapper, Principal } from '../../shared';
 
-import { Zoo } from './../zoo-management/zoo.model';
-import { ZooService } from './../zoo-management/zoo.service';
+import { Company } from './../company-management/company.model';
+import { CompanyService } from './../company-management/company.service';
 
 @Component({
     selector: 'jhi-user-mgmt-dialog',
@@ -20,7 +20,7 @@ export class UserMgmtDialogComponent implements OnInit {
     user: User;
     languages: any[];
     authorities: any[];
-    zoos: Zoo[];
+    companies: Company[];
     isSaving: Boolean;
 
     constructor(
@@ -28,7 +28,7 @@ export class UserMgmtDialogComponent implements OnInit {
         private languageHelper: JhiLanguageHelper,
         private principal: Principal,
         private userService: UserService,
-        private zooService: ZooService,
+        private companyService: CompanyService,
         private eventManager: JhiEventManager
     ) {
         this.principal.identity().then((account) => {
@@ -46,9 +46,9 @@ export class UserMgmtDialogComponent implements OnInit {
             this.languages = languages;
         });
 
-        this.zooService.query().subscribe(
+        this.companyService.query().subscribe(
             (res: ResponseWrapper) => {
-                this.zoos = res.json;
+                this.companies = res.json;
             }
         );
     }
@@ -59,8 +59,8 @@ export class UserMgmtDialogComponent implements OnInit {
 
     save() {
         this.isSaving = true;
-        if (this.currentAccount.zoo) {
-            this.user.zoo = this.currentAccount.zoo;
+        if (this.currentAccount.company) {
+            this.user.company = this.currentAccount.company;
         }
         if (this.user.id !== null) {
             this.userService.update(this.user).subscribe((response) => this.onSaveSuccess(response), () => this.onSaveError());

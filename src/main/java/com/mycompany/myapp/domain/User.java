@@ -29,8 +29,8 @@ import org.hibernate.annotations.ParamDef;
 @Entity
 @Table(name = "jhi_user")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@FilterDef(name = "ZOO_FILTER", parameters = {@ParamDef(name = "zooId", type = "long")})
-@Filter(name = "ZOO_FILTER", condition = "zoo_id = :zooId")
+@FilterDef(name = "COMPANY_FILTER", parameters = {@ParamDef(name = "companyId", type = "long")})
+@Filter(name = "COMPANY_FILTER", condition = "company_id = :companyId")
 public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -100,14 +100,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<Authority> authorities = new HashSet<>();
 
     @ManyToOne
-    private Zoo zoo;
+    private Company company;
 
-    public Zoo getZoo() {
-        return zoo;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setZoo(Zoo zoo) {
-        this.zoo = zoo;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Long getId() {
