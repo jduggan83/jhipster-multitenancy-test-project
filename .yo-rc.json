@@ -4,7 +4,7 @@
       "packageName": "com.mycompany.myapp",
       "nativeLanguage": "en"
     },
-    "jhipsterVersion": "4.10.2",
+    "jhipsterVersion": "4.11.1",
     "baseName": "jhipster",
     "packageName": "com.mycompany.myapp",
     "packageFolder": "com/mycompany/myapp",
@@ -22,7 +22,7 @@
     "buildTool": "maven",
     "enableSocialSignIn": false,
     "enableSwaggerCodegen": false,
-    "jwtSecretKey": "78298f375a9fb6fc0d63e32c41e4534966c64324",
+    "jwtSecretKey": "50c01b0041fb0a9700ba20213efd4992f37b4684",
     "clientFramework": "angularX",
     "useSass": false,
     "clientPackageManager": "yarn",
@@ -33,12 +33,6 @@
     "nativeLanguage": "en",
     "languages": [
       "en"
-    ]
-  },
-  "generator-jhipster-multitenancy": {
-    "tenantName": "company",
-    "tenantisedEntities": [
-      "book"
     ]
   }
 }

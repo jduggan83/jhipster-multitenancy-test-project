@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit {
             this.languages = languages;
         });
 
-        this.profileService.getProfileInfo().subscribe((profileInfo) => {
+        this.profileService.getProfileInfo().then((profileInfo) => {
             this.inProduction = profileInfo.inProduction;
             this.swaggerEnabled = profileInfo.swaggerEnabled;
         });
@@ -73,9 +73,6 @@ export class NavbarComponent implements OnInit {
         this.isNavbarCollapsed = !this.isNavbarCollapsed;
     }
 
-    hasCompany() {
-        return this.principal.getCompany() ? true : false;
-    }
     getImageUrl() {
         return this.isAuthenticated() ? this.principal.getImageUrl() : null;
     }

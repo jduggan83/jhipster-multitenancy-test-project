@@ -65,8 +65,8 @@ liquibase:
 #    ssl:
 #        key-store: keystore.p12
 #        key-store-password: <your-password>
-#        keyStoreType: PKCS12
-#        keyAlias: jhipster
+#        key-store-type: PKCS12
+#        key-alias: jhipster
 # ===================================================================
 server:
     port: 8080
@@ -93,7 +93,7 @@ jhipster:
     security:
         authentication:
             jwt:
-                secret: 78298f375a9fb6fc0d63e32c41e4534966c64324
+                secret: 50c01b0041fb0a9700ba20213efd4992f37b4684
                 # Token is valid 24 hours
                 token-validity-in-seconds: 86400
                 token-validity-in-seconds-for-remember-me: 2592000
