@@ -17,6 +17,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.hibernate.Filter;
 
+import java.util.Optional;
+
 @Aspect
 @Component
 public class CompanyAspect {
@@ -38,10 +40,10 @@ public class CompanyAspect {
      */
     @Before("execution(* com.starbucks.inventory.service.UserService.*(..)) || execution(* com.starbucks.inventory.service.MachineService.*(..))")
     public void beforeExecution() throws Throwable {
-    String login = SecurityUtils.getCurrentUserLogin().get();
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
 
-		if(login != null) {
-			User user = userRepository.findOneByLogin(login).get();
+		if(login.isPresent()) {
+			User user = userRepository.findOneByLogin(login.get()).get();
 
 			if (user.getCompany() != null) {
 				Filter filter = entityManager.unwrap(Session.class).enableFilter("COMPANY_FILTER");
