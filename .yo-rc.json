@@ -34,5 +34,11 @@
     "languages": [
       "en"
     ]
+  },
+  "generator-jhipster-multitenancy": {
+    "tenantName": "company",
+    "tenantisedEntities": [
+      "machine"
+    ]
   }
 }

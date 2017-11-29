@@ -91,6 +91,10 @@ export class Principal {
         return this.authenticationState.asObservable();
     }
 
+    getCompany(): String {
+        return this.isIdentityResolved() ? this.userIdentity.company : null;
+    }
+
     getImageUrl(): String {
         return this.isIdentityResolved() ? this.userIdentity.imageUrl : null;
     }

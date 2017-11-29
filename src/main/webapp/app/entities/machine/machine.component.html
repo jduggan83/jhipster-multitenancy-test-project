@@ -1,0 +1,62 @@
+<div>
+    <h2>
+        <span jhiTranslate="jhipsterApp.machine.home.title">Machines</span>
+        <button class="btn btn-primary float-right jh-create-entity create-machine" [routerLink]="['/', { outlets: { popup: ['machine-new'] } }]">
+            <span class="fa fa-plus"></span>
+            <span  jhiTranslate="jhipsterApp.machine.home.createLabel">
+            Create new Machine
+            </span>
+        </button>
+    </h2>
+    <jhi-alert></jhi-alert>
+    <div class="row">
+    </div>
+    <br/>
+    <div class="table-responsive" *ngIf="machines">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+            <th><span jhiTranslate="global.field.id">ID</span></th>
+            <th><span jhiTranslate="jhipsterApp.machine.name">Name</span></th>
+            <th *ngIf="!currentAccount.company"><span jhiTranslate="userManagementCompany">Company</span></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let machine of machines ;trackBy: trackId">
+                <td><a [routerLink]="['../machine', machine.id ]">{{machine.id}}</a></td>
+                <td>{{machine.name}}</td>
+                <td *ngIf="!currentAccount.company">
+                    <div *ngIf="machine.company">
+                        <a [routerLink]="['../company-management', machine.company?.id ]" >{{machine.company?.name}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['../machine', machine.id ]"
+                                class="btn btn-info btn-sm">
+                            <span class="fa fa-eye"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'machine/'+ machine.id + '/edit'} }]"
+                                replaceUrl="true"
+                                class="btn btn-primary btn-sm">
+                            <span class="fa fa-pencil"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'machine/'+ machine.id + '/delete'} }]"
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm">
+                            <span class="fa fa-remove"></span>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

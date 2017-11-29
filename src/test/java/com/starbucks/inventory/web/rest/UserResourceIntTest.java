@@ -3,6 +3,7 @@ package com.starbucks.inventory.web.rest;
 import com.starbucks.inventory.JhipsterApp;
 import com.starbucks.inventory.domain.Authority;
 import com.starbucks.inventory.domain.User;
+import com.starbucks.inventory.domain.Company;
 import com.starbucks.inventory.repository.UserRepository;
 import com.starbucks.inventory.security.AuthoritiesConstants;
 import com.starbucks.inventory.service.MailService;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,10 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -47,10 +52,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = JhipsterApp.class)
 public class UserResourceIntTest {
 
+    private static final Long DEFAULT_ID = 1L;
+
     private static final String DEFAULT_LOGIN = "johndoe";
     private static final String UPDATED_LOGIN = "jhipster";
-
-    private static final Long DEFAULT_ID = 1L;
 
     private static final String DEFAULT_PASSWORD = "passjohndoe";
     private static final String UPDATED_PASSWORD = "passjhipster";
@@ -137,20 +142,31 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void createUser() throws Exception {
         int databaseSizeBeforeCreate = userRepository.findAll().size();
+        // create company object
+        Company company = CompanyResourceIntTest.createEntity(em);
+        em.persist(company);
 
         // Create the User
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setLogin(DEFAULT_LOGIN);
-        managedUserVM.setPassword(DEFAULT_PASSWORD);
-        managedUserVM.setFirstName(DEFAULT_FIRSTNAME);
-        managedUserVM.setLastName(DEFAULT_LASTNAME);
-        managedUserVM.setEmail(DEFAULT_EMAIL);
-        managedUserVM.setActivated(true);
-        managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
-        managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            null,
+            DEFAULT_LOGIN,
+            DEFAULT_PASSWORD,
+            DEFAULT_FIRSTNAME,
+            DEFAULT_LASTNAME,
+            DEFAULT_EMAIL,
+            true,
+            DEFAULT_IMAGEURL,
+            DEFAULT_LANGKEY,
+            null,
+            null,
+            null,
+            null,
+            authorities, null);
 
         restUserMockMvc.perform(post("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -171,20 +187,27 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void createUserWithExistingId() throws Exception {
         int databaseSizeBeforeCreate = userRepository.findAll().size();
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(1L);
-        managedUserVM.setLogin(DEFAULT_LOGIN);
-        managedUserVM.setPassword(DEFAULT_PASSWORD);
-        managedUserVM.setFirstName(DEFAULT_FIRSTNAME);
-        managedUserVM.setLastName(DEFAULT_LASTNAME);
-        managedUserVM.setEmail(DEFAULT_EMAIL);
-        managedUserVM.setActivated(true);
-        managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
-        managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            1L,
+            DEFAULT_LOGIN,
+            DEFAULT_PASSWORD,
+            DEFAULT_FIRSTNAME,
+            DEFAULT_LASTNAME,
+            DEFAULT_EMAIL,
+            true,
+            DEFAULT_IMAGEURL,
+            DEFAULT_LANGKEY,
+            null,
+            null,
+            null,
+            null,
+            authorities, null);
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restUserMockMvc.perform(post("/api/users")
@@ -199,21 +222,29 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void createUserWithExistingLogin() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
         int databaseSizeBeforeCreate = userRepository.findAll().size();
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setLogin(DEFAULT_LOGIN);// this login should already be used
-        managedUserVM.setPassword(DEFAULT_PASSWORD);
-        managedUserVM.setFirstName(DEFAULT_FIRSTNAME);
-        managedUserVM.setLastName(DEFAULT_LASTNAME);
-        managedUserVM.setEmail("anothermail@localhost");
-        managedUserVM.setActivated(true);
-        managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
-        managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            null,
+            DEFAULT_LOGIN, // this login should already be used
+            DEFAULT_PASSWORD,
+            DEFAULT_FIRSTNAME,
+            DEFAULT_LASTNAME,
+            "anothermail@localhost",
+            true,
+            DEFAULT_IMAGEURL,
+            DEFAULT_LANGKEY,
+            null,
+            null,
+            null,
+            null,
+            authorities, null);
 
         // Create the User
         restUserMockMvc.perform(post("/api/users")
@@ -228,21 +259,29 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void createUserWithExistingEmail() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
         int databaseSizeBeforeCreate = userRepository.findAll().size();
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setLogin("anotherlogin");
-        managedUserVM.setPassword(DEFAULT_PASSWORD);
-        managedUserVM.setFirstName(DEFAULT_FIRSTNAME);
-        managedUserVM.setLastName(DEFAULT_LASTNAME);
-        managedUserVM.setEmail(DEFAULT_EMAIL);// this email should already be used
-        managedUserVM.setActivated(true);
-        managedUserVM.setImageUrl(DEFAULT_IMAGEURL);
-        managedUserVM.setLangKey(DEFAULT_LANGKEY);
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            null,
+            "anotherlogin",
+            DEFAULT_PASSWORD,
+            DEFAULT_FIRSTNAME,
+            DEFAULT_LASTNAME,
+            DEFAULT_EMAIL, // this email should already be used
+            true,
+            DEFAULT_IMAGEURL,
+            DEFAULT_LANGKEY,
+            null,
+            null,
+            null,
+            null,
+            authorities, null);
 
         // Create the User
         restUserMockMvc.perform(post("/api/users")
@@ -257,6 +296,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void getAllUsers() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -276,6 +316,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void getUser() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -294,6 +335,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void getNonExistingUser() throws Exception {
         restUserMockMvc.perform(get("/api/users/unknown"))
             .andExpect(status().isNotFound());
@@ -301,6 +343,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void updateUser() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -309,21 +352,23 @@ public class UserResourceIntTest {
         // Update the user
         User updatedUser = userRepository.findOne(user.getId());
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(updatedUser.getId());
-        managedUserVM.setLogin(updatedUser.getLogin());
-        managedUserVM.setPassword(UPDATED_PASSWORD);
-        managedUserVM.setFirstName(UPDATED_FIRSTNAME);
-        managedUserVM.setLastName(UPDATED_LASTNAME);
-        managedUserVM.setEmail(UPDATED_EMAIL);
-        managedUserVM.setActivated(updatedUser.getActivated());
-        managedUserVM.setImageUrl(UPDATED_IMAGEURL);
-        managedUserVM.setLangKey(UPDATED_LANGKEY);
-        managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
-        managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
-        managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
-        managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            updatedUser.getId(),
+            updatedUser.getLogin(),
+            UPDATED_PASSWORD,
+            UPDATED_FIRSTNAME,
+            UPDATED_LASTNAME,
+            UPDATED_EMAIL,
+            updatedUser.getActivated(),
+            UPDATED_IMAGEURL,
+            UPDATED_LANGKEY,
+            updatedUser.getCreatedBy(),
+            updatedUser.getCreatedDate(),
+            updatedUser.getLastModifiedBy(),
+            updatedUser.getLastModifiedDate(),
+            authorities, null);
 
         restUserMockMvc.perform(put("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -343,6 +388,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void updateUserLogin() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -351,21 +397,23 @@ public class UserResourceIntTest {
         // Update the user
         User updatedUser = userRepository.findOne(user.getId());
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(updatedUser.getId());
-        managedUserVM.setLogin(UPDATED_LOGIN);
-        managedUserVM.setPassword(UPDATED_PASSWORD);
-        managedUserVM.setFirstName(UPDATED_FIRSTNAME);
-        managedUserVM.setLastName(UPDATED_LASTNAME);
-        managedUserVM.setEmail(UPDATED_EMAIL);
-        managedUserVM.setActivated(updatedUser.getActivated());
-        managedUserVM.setImageUrl(UPDATED_IMAGEURL);
-        managedUserVM.setLangKey(UPDATED_LANGKEY);
-        managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
-        managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
-        managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
-        managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            updatedUser.getId(),
+            UPDATED_LOGIN,
+            UPDATED_PASSWORD,
+            UPDATED_FIRSTNAME,
+            UPDATED_LASTNAME,
+            UPDATED_EMAIL,
+            updatedUser.getActivated(),
+            UPDATED_IMAGEURL,
+            UPDATED_LANGKEY,
+            updatedUser.getCreatedBy(),
+            updatedUser.getCreatedDate(),
+            updatedUser.getLastModifiedBy(),
+            updatedUser.getLastModifiedDate(),
+            authorities, null);
 
         restUserMockMvc.perform(put("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -386,6 +434,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void updateUserExistingEmail() throws Exception {
         // Initialize the database with 2 users
         userRepository.saveAndFlush(user);
@@ -404,21 +453,23 @@ public class UserResourceIntTest {
         // Update the user
         User updatedUser = userRepository.findOne(user.getId());
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(updatedUser.getId());
-        managedUserVM.setLogin(updatedUser.getLogin());
-        managedUserVM.setPassword(updatedUser.getPassword());
-        managedUserVM.setFirstName(updatedUser.getFirstName());
-        managedUserVM.setLastName(updatedUser.getLastName());
-        managedUserVM.setEmail("jhipster@localhost");// this email should already be used by anotherUser
-        managedUserVM.setActivated(updatedUser.getActivated());
-        managedUserVM.setImageUrl(updatedUser.getImageUrl());
-        managedUserVM.setLangKey(updatedUser.getLangKey());
-        managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
-        managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
-        managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
-        managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            updatedUser.getId(),
+            updatedUser.getLogin(),
+            updatedUser.getPassword(),
+            updatedUser.getFirstName(),
+            updatedUser.getLastName(),
+            "jhipster@localhost",  // this email should already be used by anotherUser
+            updatedUser.getActivated(),
+            updatedUser.getImageUrl(),
+            updatedUser.getLangKey(),
+            updatedUser.getCreatedBy(),
+            updatedUser.getCreatedDate(),
+            updatedUser.getLastModifiedBy(),
+            updatedUser.getLastModifiedDate(),
+            authorities, null);
 
         restUserMockMvc.perform(put("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -428,6 +479,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void updateUserExistingLogin() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -446,21 +498,23 @@ public class UserResourceIntTest {
         // Update the user
         User updatedUser = userRepository.findOne(user.getId());
 
-        ManagedUserVM managedUserVM = new ManagedUserVM();
-        managedUserVM.setId(updatedUser.getId());
-        managedUserVM.setLogin("jhipster");// this login should already be used by anotherUser
-        managedUserVM.setPassword(updatedUser.getPassword());
-        managedUserVM.setFirstName(updatedUser.getFirstName());
-        managedUserVM.setLastName(updatedUser.getLastName());
-        managedUserVM.setEmail(updatedUser.getEmail());
-        managedUserVM.setActivated(updatedUser.getActivated());
-        managedUserVM.setImageUrl(updatedUser.getImageUrl());
-        managedUserVM.setLangKey(updatedUser.getLangKey());
-        managedUserVM.setCreatedBy(updatedUser.getCreatedBy());
-        managedUserVM.setCreatedDate(updatedUser.getCreatedDate());
-        managedUserVM.setLastModifiedBy(updatedUser.getLastModifiedBy());
-        managedUserVM.setLastModifiedDate(updatedUser.getLastModifiedDate());
-        managedUserVM.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        Set<String> authorities = new HashSet<>();
+        authorities.add("ROLE_USER");
+        ManagedUserVM managedUserVM = new ManagedUserVM(
+            updatedUser.getId(),
+            "jhipster", // this login should already be used by anotherUser
+            updatedUser.getPassword(),
+            updatedUser.getFirstName(),
+            updatedUser.getLastName(),
+            updatedUser.getEmail(),
+            updatedUser.getActivated(),
+            updatedUser.getImageUrl(),
+            updatedUser.getLangKey(),
+            updatedUser.getCreatedBy(),
+            updatedUser.getCreatedDate(),
+            updatedUser.getLastModifiedBy(),
+            updatedUser.getLastModifiedDate(),
+            authorities, null);
 
         restUserMockMvc.perform(put("/api/users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -470,6 +524,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void deleteUser() throws Exception {
         // Initialize the database
         userRepository.saveAndFlush(user);
@@ -487,6 +542,7 @@ public class UserResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser()
     public void getAllAuthorities() throws Exception {
         restUserMockMvc.perform(get("/api/users/authorities")
             .accept(TestUtil.APPLICATION_JSON_UTF8)
@@ -494,7 +550,7 @@ public class UserResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").value(containsInAnyOrder(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN)));
+            .andExpect(jsonPath("$").value(containsInAnyOrder("ROLE_USER", "ROLE_ADMIN")));
     }
 
     @Test
@@ -520,19 +576,20 @@ public class UserResourceIntTest {
 
     @Test
     public void testUserDTOtoUser() {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(DEFAULT_ID);
-        userDTO.setLogin(DEFAULT_LOGIN);
-        userDTO.setFirstName(DEFAULT_FIRSTNAME);
-        userDTO.setLastName(DEFAULT_LASTNAME);
-        userDTO.setEmail(DEFAULT_EMAIL);
-        userDTO.setActivated(true);
-        userDTO.setImageUrl(DEFAULT_IMAGEURL);
-        userDTO.setLangKey(DEFAULT_LANGKEY);
-        userDTO.setCreatedBy(DEFAULT_LOGIN);
-        userDTO.setLastModifiedBy(DEFAULT_LOGIN);
-        userDTO.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-
+        UserDTO userDTO = new UserDTO(
+            DEFAULT_ID,
+            DEFAULT_LOGIN,
+            DEFAULT_FIRSTNAME,
+            DEFAULT_LASTNAME,
+            DEFAULT_EMAIL,
+            true,
+            DEFAULT_IMAGEURL,
+            DEFAULT_LANGKEY,
+            DEFAULT_LOGIN,
+            null,
+            DEFAULT_LOGIN,
+            null,
+            Stream.of(AuthoritiesConstants.USER).collect(Collectors.toSet()), null);
         User user = userMapper.userDTOToUser(userDTO);
         assertThat(user.getId()).isEqualTo(DEFAULT_ID);
         assertThat(user.getLogin()).isEqualTo(DEFAULT_LOGIN);
@@ -556,6 +613,7 @@ public class UserResourceIntTest {
         user.setCreatedDate(Instant.now());
         user.setLastModifiedBy(DEFAULT_LOGIN);
         user.setLastModifiedDate(Instant.now());
+
         Set<Authority> authorities = new HashSet<>();
         Authority authority = new Authority();
         authority.setName(AuthoritiesConstants.USER);

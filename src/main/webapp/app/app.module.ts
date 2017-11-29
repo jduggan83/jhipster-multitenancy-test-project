@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Ng2Webstorage } from 'ng2-webstorage';
 
-import { JhipsterSharedModule, UserRouteAccessService } from './shared';
+import { JhipsterSharedModule, UserRouteAccessService, CompanyRouteAccessService } from './shared';
 import { JhipsterAppRoutingModule} from './app-routing.module';
 import { JhipsterHomeModule } from './home/home.module';
 import { JhipsterAdminModule } from './admin/admin.module';
@@ -47,6 +47,7 @@ import {
     ],
     providers: [
         ProfileService,
+        CompanyRouteAccessService,
         customHttpProvider(),
         PaginationConfig,
         UserRouteAccessService
